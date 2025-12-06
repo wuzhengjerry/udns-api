@@ -1,0 +1,100 @@
+[app]
+name = "udns-api"
+host = "0.0.0.0"
+port = "8060"
+key = "default"
+mode = "dev"
+goroutine_size = 20
+chan_size = 500
+x_check_ip = false
+
+[log]
+level = "debug"
+path_dir = "log"
+format = "json"
+to = "file"
+
+[mongo]
+endpoints = ["127.0.0.1:27017"]
+username = "mongouser"
+password = "udnsapi2025"
+database = "admin"
+
+[cache]
+# or type = "memory"
+type = "redis"
+is_cache = false
+
+[cache.redis]
+prefix = ""
+address = "127.0.0.1:6379"
+db = 0
+password = ""
+default_ttl = 300
+
+[qflow]
+addr = "http://127.0.0.1"
+token = "4bbbc3c0-9b2d-11eb-b9f5-ba3fe58b92c7"
+project_id = 148
+project_name = "udns-web"
+auto_operate_token = "udns-dev"
+
+[bqueue]
+addr = ""
+topic = "UDNS_center_test"
+group = "UDNS"
+version = "2.4.2"
+assignor = "roundrobin"
+oldest = true
+
+[nops]
+webapi_host = "http://t127.0.0.1"
+i_gate_token = "Fwn4ylkicdewMp9z1swLzYSbGu9FhoVT"
+host = "nops.woa.com"
+port = "80"
+hmac_key = ""
+hmac_secret = ""
+
+
+[flyPigeon]
+addr = "http://127.0.0.1"
+hmac_id = "udns"
+hmac_secret = "z83YyC5fGhkUN0oFaN6AwMMz5r2JwBSQ"
+corp_id = "wxab249edd27d57738"
+corp_secret = "0Tf4fZTKYIewKK2MpJrOF870sMGha_GqXDG7AZVg0TI"
+app_key = "ad7eb985262242a68034d8355fd982ad"
+sys_id = "26070"
+mail_send_from = "UDNS@tencent.com"
+
+[tof]
+host = "http://127.0.0.1"
+#paas_id = "dwrucyhcgkgamftzxnkdwfu"
+#paas_token = "Fj8P8uYvVPrafCSqi19gQZSJhPo6DzDA"
+paas_id = "paasfront_udns_com"
+paas_token = "GFQhJ3rvqJG5wXUgOMHCZimIYK9Nn96G"
+gslb_host = "https://xxx.com"
+sniper_host = "http://sniper.com"
+
+[email]
+server_host = "smtp@tencent.com"
+server_port = 465sss
+from_email = "udns@tencent.com"
+passwd = ""
+
+[oudns]
+addr = "http://127.0.0.1/cgi-bin/udns/"
+system_id = 1389955267
+proposer = "xxxx"
+add_api = "add_domain"
+add_zone_api = "add_zone_mnop"
+mod_api = "mod_domain"
+del_api = "delete_domain"
+query_api = "get_domain_conf"
+batch_query_api = "get_domain_conf_batch"
+batch_mod_api = "mod_domain_batch"
+
+[itapi]
+addr = "http://test.srv.ittoolacom"
+read_addr = "http://test.srv.ittool.com"
+mod_addr = "/api/DomainApI/UDNSSubmit"
+read_api = "/api/dnsapi/GetIsDomainInfo"

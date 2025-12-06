@@ -1,0 +1,708 @@
+basePath: /api/v1/
+definitions:
+  flow.Basic:
+    properties:
+      child_item:
+        type: string
+      task_name:
+        type: string
+    type: object
+  flow.QueryTaskParams:
+    properties:
+      create_time_end:
+        type: string
+      create_time_start:
+        type: string
+      creator:
+        type: string
+      doing_step_owner:
+        type: string
+      field_input_value:
+        type: string
+      finish_time_end:
+        type: string
+      finish_time_start:
+        type: string
+      flow_id:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      page:
+        type: integer
+      page_size:
+        type: integer
+      status:
+        items:
+          type: string
+        type: array
+      step_owner:
+        type: string
+    type: object
+  flow.StartTaskParams:
+    properties:
+      basic:
+        $ref: '#/definitions/flow.Basic'
+      echo_fields:
+        additionalProperties:
+          type: string
+        type: object
+      echo_step_owners:
+        additionalProperties:
+          type: string
+        type: object
+      flow_id:
+        type: integer
+      flow_type:
+        type: string
+    type: object
+  frame.AuthResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      msg:
+        type: string
+    type: object
+  role.Role:
+    properties:
+      created_time:
+        description: 创建时间
+        type: integer
+      deleted:
+        description: 是否删除
+        type: boolean
+      deleted_time:
+        description: 删除时间
+        type: integer
+      description:
+        description: 描述信息
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 线路名称
+        type: string
+      updated_time:
+        description: 恢复时间
+        type: integer
+      users:
+        description: 关联用户，分号相隔
+        type: string
+    type: object
+  route.Route:
+    properties:
+      created_time:
+        description: 创建时间
+        type: integer
+      deleted:
+        description: 是否删除
+        type: boolean
+      deleted_time:
+        description: 删除时间
+        type: integer
+      description:
+        description: 描述信息
+        type: string
+      enabled:
+        description: 是否启用
+        type: boolean
+      id:
+        description: ID
+        type: string
+      name:
+        description: 线路名称
+        type: string
+      operator:
+        description: 负责人
+        type: string
+      route_id:
+        description: 线路ID
+        type: string
+      updated_time:
+        description: 恢复时间
+        type: integer
+    type: object
+  zone.Zone:
+    properties:
+      created_time:
+        description: 触发时间
+        type: integer
+      deleted:
+        description: 是否删除
+        type: boolean
+      deleted_time:
+        description: 删除时间
+        type: integer
+      description:
+        description: 描述信息
+        type: string
+      enabled:
+        description: 是否启用
+        type: boolean
+      id:
+        description: ID
+        type: string
+      name:
+        description: 二级zone域名
+        type: string
+      operator:
+        description: 负责人
+        type: string
+      updated_time:
+        description: 恢复时间
+        type: integer
+      zone_id:
+        description: 二级zone id
+        type: integer
+    type: object
+host: test.udns.woa.com
+info:
+  contact: {}
+  description: UDNS WEB 后台服务，主要提供域名管理、线路管理、后台管理等接口功能。
+  termsOfService: http://test.udns.woa.com
+  title: UDNS-WEB api服务
+  version: "1.0"
+paths:
+  /flow/status_notify:
+    get:
+      description: QFlow状态推送
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 推送ID
+        in: query
+        name: _qflow_task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 状态推送
+      tags:
+      - 状态推送
+  /flow/task:
+    post:
+      description: 传递参数新增task
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 新增task参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/flow.StartTaskParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 新增流程任务
+      tags:
+      - 流程管理
+  /flow/task/{task_id}:
+    get:
+      description: 根据taskID查询task详情
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: task ID,流程ID
+        in: path
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: task详情
+      tags:
+      - 流程管理
+  /flow/task/{task_id}/steps/{step_id}/submit:
+    put:
+      description: 根据step ID提交步骤，通常在保存字段后操作
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: step ID,步骤ID
+        in: path
+        name: step_id
+        required: true
+        type: string
+      - description: task ID,任务ID
+        in: path
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 提交步骤
+      tags:
+      - 流程管理
+  /flow/task/{task_id}/stop:
+    put:
+      description: 根据taskID中止步骤，只有creator和管理员可以操作
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: step ID,步骤ID
+        in: path
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 中止流程
+      tags:
+      - 流程管理
+  /flow/tasks:
+    post:
+      description: 查询所有流程列表，需要管理员权限
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 查询task参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/flow.QueryTaskParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 流程列表
+      tags:
+      - 流程列表
+  /flow/tasks/my_application:
+    post:
+      description: 查询我发起所有流程，支持各种参数
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 查询task参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/flow.QueryTaskParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 我的申请
+      tags:
+      - 流程列表
+  /flow/tasks/my_approve:
+    post:
+      description: 查询由我审批的流程，包括当前待我审批，以及我审批完成的流程
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 查询task参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/flow.QueryTaskParams'
+      - description: 当done=true查询已经审批完成的流程，否则查询当前待我审批的列表
+        in: query
+        name: done
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 我的审批
+      tags:
+      - 流程列表
+  /flow/tasks/steps/{step_id}/field:
+    put:
+      description: 根据步骤ID修改字段值
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: '参数：{field_id: field_value}'
+        in: body
+        name: object
+        required: true
+        schema:
+          type: object
+      - description: step ID,步骤ID
+        in: path
+        name: step_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 保存字段
+      tags:
+      - 流程管理
+  /flows:
+    get:
+      description: 查询所有流程类型，为发起流程查询流程提供参数
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 流程类型列表
+      tags:
+      - 流程列表
+  /role:
+    get:
+      description: 查询角色列表
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: page size
+        in: query
+        name: ps
+        required: true
+        type: string
+      - description: page number
+        in: query
+        name: pn
+        required: true
+        type: string
+      - description: 基础域关键字，支持模糊匹配，可为空
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 角色列表
+      tags:
+      - 权限管理
+  /role/{id}:
+    put:
+      description: 根据ID编辑具体角色对应用户
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 编辑线路参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/role.Role'
+      - description: 角色 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 编辑角色
+      tags:
+      - 权限管理
+  /route:
+    get:
+      description: 根据名称匹配查询线路列表
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: page size
+        in: query
+        name: ps
+        required: true
+        type: string
+      - description: page number
+        in: query
+        name: pn
+        required: true
+        type: string
+      - description: 基础域关键字，支持模糊匹配，可为空
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 线路列表
+      tags:
+      - 线路管理
+    post:
+      description: 传递参数新增线路
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 新增线路参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/route.Route'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 新增线路
+      tags:
+      - 线路管理
+  /route/{id}:
+    delete:
+      description: 根据ID删除具体线路
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 线路 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 删除线路
+      tags:
+      - 线路管理
+    put:
+      description: 根据ID编辑具体线路
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 编辑线路参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/route.Route'
+      - description: 线路 ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 编辑线路
+      tags:
+      - 线路管理
+  /zone:
+    get:
+      description: 根据名称匹配查询二级zone列表
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: page size
+        in: query
+        name: ps
+        required: true
+        type: string
+      - description: page number
+        in: query
+        name: pn
+        required: true
+        type: string
+      - description: 基础域关键字，支持模糊匹配，可为空
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 二级zone列表
+      tags:
+      - 二级zone管理
+    post:
+      description: 传递参数新增二级zone
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 新增二级zone参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/zone.Zone'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 新增二级zone
+      tags:
+      - 二级zone管理
+  /zone/{id}:
+    delete:
+      description: 根据ID删除具体二级zone
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 二级zone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 删除二级zone
+      tags:
+      - 二级zone管理
+    put:
+      description: 根据ID编辑具体二级zone
+      parameters:
+      - description: 用户名
+        in: header
+        name: StaffName
+        required: true
+        type: string
+      - description: 编辑二级zone参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/zone.Zone'
+      - description: 二级zone ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/frame.AuthResponse'
+      summary: 编辑二级zone
+      tags:
+      - 二级zone管理
+swagger: "2.0"
